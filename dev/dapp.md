@@ -1,6 +1,6 @@
 # dapp开发
 
-## 技术选型
+## [技术选型](/dev/tech-stack)
 
 - 前端框架：Next.js 15 + TypeScript
 - 样式框架：Tailwind CSS + shadcn/ui
