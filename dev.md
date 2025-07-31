@@ -8,4 +8,4 @@
 
 - ✅ [域名购买](/dev/domain)
 - 🟡 [dapp网站开发](/dev/dapp)
-- 🟡 [solana发币](/dev/solana)
+- 🟡 [solana发币](/dev/solana) 为什么会优化开发solana，因为supabase当前支持solana钱包登入，eth钱包当前还没支持，只是说coming soon。
