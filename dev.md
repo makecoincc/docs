@@ -8,4 +8,4 @@
 
 - ✅ [域名购买](/dev/domain)
 - 🟡 [dapp网站开发](/dev/dapp)
-- 🟡 [solana智能合约开发](/dev/solana)
+- 🟡 [solana发币](/dev/solana)
