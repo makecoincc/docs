@@ -236,4 +236,38 @@ Signature: edPFEY2yBn3qKKFQ3AM3i7RMH1qZ4oSuidA5tWfjuvaF89yfjj1iYqFxobPDUfnL24h7H
 
 上面的发币的过程其实是比较简单的，因为不用写任何代码，只是执行命令，但makecoin.cc的目标是让用户可以傻瓜式发币，所以后面就是写程序，让用户在页面提交信息，程序完成发币。
 
+- 准备工作：图片、Metadata上传
 
+代币的logo图片和包含Metadata信息的json文件，都需要上传到网络并能通过url访问，所以需要一个存储服务，对比了，还是用supabase吧
+
+| 服务名称       | 免费额度/特点                          | 自定义域名支持 | 备注                     |
+|----------------|----------------------------------------|----------------|--------------------------|
+| Supabase Storage     | 1 GB file storage         | 免费计划不支持         |   Pro Plan支持，$25.00/ month起     |
+| Cloudflare images    | 5,000 unique transformations per month            | 支持，但存储按量计费       |   $5 per 100,000 images stored $1 per 100,000 images delivered $0.50    |
+|   Pinata   | 1GB Storage              |     免费计划不支持     |  ipfs技术，收费计划 $20/mo起  |
+
+发币过程
+
+1. 连接钱包，比如浏览器扩展程序plantom
+2. 用户在页面输入name、symbol、输入metadata的uri或上传
+3. "@solana/web3.js" SystemProgram.createAccount，创建mint Account
+4. "@solana/spl-token" createInitializeMetadataPointerInstruction 初始化MetadataPointer Extension
+5. "@solana/spl-token" createInitializeMintInstruction 初始化Mint Account数据
+6. "@solana/spl-token-metadata" createInitializeInstruction 初始化Metadata Account数据
+7. "@solana/web3.js" new Transaction().add 将3，4，5，6合并为交易
+8. "@solana/web3.js" sendAndConfirmTransaction 发送交易
+
+其他
+9. "@solana/spl-token" getMetadataPointerState 获取metadata pointer state
+10. "@solana/spl-token" getTokenMetadata 获取metadata state
+11. "@solana/spl-token-metadata" createUpdateFieldInstruction 添加额外信息
+12. "@solana/spl-token-metadata" createRemoveKeyInstruction 移除额外信息
+
+页面form参数
+```json
+{
+    "name": "",
+    "symbol": "",
+    "uri": ""
+}
+```
