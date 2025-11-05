@@ -1,0 +1,15 @@
+   {
+     "title": "Solana",
+     "pages": [
+       "create-token",
+       "add-metadata",
+       "mint-tokens",
+       "transfer-tokens",
+       "approve-revoke-delegate",
+       "authority",
+       "burn-tokens",
+       "sync-native",
+       "close-token-account",
+       "freeze-thaw-account"
+     ]
+   }

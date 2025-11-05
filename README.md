@@ -1,45 +1,29 @@
-# docs
+### 欢迎来到 MakeCoin
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+Makecoin 是一个专注于区块链技术学习的平台。
 
-Run development server:
+区块链技术伴随着比特币的诞生而进入大众视野。简单来说，区块链是一种分布式账本系统，其数据存储在多台计算机上（称为节点），通过网络保持同步，确保所有信息公开透明、不可篡改。
 
-```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
-```
+每个账户的“钥匙”是私钥，这是密码学中的核心概念之一。在非对称加密体系中，公钥用于公开识别，私钥则用于授权操作。只要掌握了某个账户的私钥，就拥有了该账户的全部控制权，因此私钥的安全至关重要。
 
-Open http://localhost:3000 with your browser to see the result.
+比特币的区块链功能相对单一，仅用于记录交易账本。而后续发展出的区块链平台，如 Ethereum、Solana、BNB Chain、Polygon 等，不仅能记录交易，还能部署程序逻辑——即所谓的“智能合约”。智能合约可以根据预设条件自动执行操作，如转账、验证等，极大地拓展了区块链的应用边界。
 
-## Explore
+Makecoin 正在构建与这些主流区块链交互的功能模块。例如，通过 Solana 官方 SDK，我们实现了代币的创建、铸币、转账等操作。整个项目代码完全开源，并配有详细文档，所有功能仅用于链上交互，不收取任何平台费用——因为 Makecoin 的定位是一个纯粹的技术学习平台。
 
-In the project, you can see:
+目前市面上也有类似的工具网站，但它们通常通过自定义智能合约实现功能，并在过程中收取额外费用，除去链上交易成本，其余部分即为平台利润。而 Makecoin 不以盈利为目的，致力于为学习者提供一个开放、透明、免费的实践环境。
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+当前，Makecoin 正在开发 Solana 上的代币发行等功能，目前仅支持测试网络，待程序稳定后会考虑上线主网。
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+如果你也想发行一个自己的代币，体验一次链上交易，不妨来 Makecoin 试试——无需编写代码，只需提供必要信息，即可完成整个流程。
 
-### Fumadocs MDX
+### 加入我们
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
+我们欢迎所有对区块链技术感兴趣的朋友：
 
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
+- 提出建议：帮助我们改进产品功能
+- 技术交流：分享您的区块链学习心得
+- 共同开发：参与开源项目建设
 
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+**联系方式**：
+- Telegram: [@makecoincc](https://t.me/makecoincc)
+- Email: [contact@makecoin.cc](mailto:contact@makecoin.cc)
