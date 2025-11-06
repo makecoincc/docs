@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { source } from '@/lib/source';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
 import { baseOptions } from '@/lib/layout.shared';
 
 export default async function Layout({
@@ -11,5 +12,9 @@ export default async function Layout({
 }) {
   const { lang } = await params;
 
-  return <HomeLayout {...baseOptions(lang)}>{children}</HomeLayout>;
+  return (
+    <DocsLayout {...baseOptions(lang)} tree={source.pageTree[lang]}>
+      {children}
+    </DocsLayout>
+  );
 }
