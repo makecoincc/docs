@@ -14,7 +14,7 @@ Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态
 从创建代币mint帐户开始，一般还需要铸币，最终在用户钱包中显示。所以创建币有几个相应的步骤
 
 ### Token Program (原始版本)
-- **提供代币的Decimals和Supply。**
+<Callout>提供代币的Decimals和Supply，创建代币</Callout>
 - 生成铸币账户和代币账户密钥对。
 - 创建代币 mint 帐户，并初始化。
 - 创建token account并初始化。
@@ -25,7 +25,7 @@ Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态
 
 
 ### Token Extension Program (Token 2022)
-- **提供代币的Decimals、Supply、Name、Symbol和Uri。**
+<Callout>提供代币的Decimals、Supply、Name、Symbol和Uri，创建代币</Callout>
 - 生成铸币账户和代币账户密钥对。
 - 组装metadata。（Token 2022才有）
 - 计算创建帐户所需要的空间和费用。（Token 2022才有）
