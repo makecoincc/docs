@@ -8,8 +8,8 @@
        "approve-revoke-delegate",
        "authority",
        "burn-tokens",
-       "sync-native",
        "close-token-account",
-       "freeze-thaw-account"
+       "freeze-thaw-account",
+       "instructions"
      ]
    }

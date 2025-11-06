@@ -1,17 +1,16 @@
 ---
-title: Freeze/Thaw Account
-description: Freeze/Thaw token accounts.
+title: 冻结/解冻 token 帐户
+description: 冻结/解冻 token 帐户。
 ---
 
-## Code Block
+### 冻结帐户
 
-```js
-console.log('Hello World');
-```
+冻结可阻止特定 token 账户的所有 token 转移或销毁。
+一旦被冻结，该账户将无法发送 token、接收 token 或关闭，直到被解冻为止。
+只有 token 铸造的冻结权限持有者可以冻结账户。
+如果在铸造账户上撤销（设置为 null）冻结权限，则 token 将永远无法被冻结。
 
-## Cards
+### 解冻帐户
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+解冻可以撤销冻结状态，恢复之前被冻结的 token account 的全部功能。
+解冻后，该账户可以正常发送和接收代币。只有代币铸造的冻结权限持有者才能解冻账户。

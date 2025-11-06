@@ -1,17 +1,10 @@
 ---
-title: Close Token Account
-description: Close token accounts.
+title: 关闭token帐户
+description: 关闭token帐户
 ---
 
-## Code Block
+### 关闭帐户
 
-```js
-console.log('Hello World');
-```
-
-## Cards
-
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+永久关闭一个 token account，并将所有剩余的 SOL（租金）转移到指定的目标账户。
+在关闭之前，token account 的余额必须为零。
+只有 token account 的所有者或指定的关闭权限人可以执行此操作。

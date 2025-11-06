@@ -1,17 +1,11 @@
 ---
-title: Burn Tokens
-description: Burn tokens.
+title: 销毁代币
+description: 销毁代币
 ---
 
-## Code Block
+<Callout>提供目标代币帐户和代币数量，目标帐户减少代币</Callout>
 
-```js
-console.log('Hello World');
-```
-
-## Cards
-
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+### 销毁代币
+减少 token 账户中的余额来永久销毁代币。
+被销毁的代币将从流通中移除，并减少在 mint account 中记录的 supply。
+只有 token 账户的所有者才能从其账户中销毁代币。

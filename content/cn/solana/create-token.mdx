@@ -2,7 +2,6 @@
 title: 创建代币
 description: 创建一个SPL（Solana Program Library）代币
 ---
-import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
 Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态系统有两个主要的 Token Program。
 
@@ -11,13 +10,15 @@ Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态
 
 创建代币就是使用solana的客户端程序，调用这两个中的一个。
 
-从创建代币mint帐户开始，一般还需要铸币，最终在用户钱包中显示。所以创建币有几个相应的步骤
+从创建代币mint帐户开始，一般还需要铸币，最终在用户钱包中显示。所以创建币包含几个步骤
 
 ### Token Program (原始版本)
 <Callout>提供代币的Decimals和Supply，创建代币</Callout>
 - 生成铸币账户和代币账户密钥对。
-- 创建代币 mint 帐户，并初始化。
-- 创建token account并初始化。
+- 创建代币 mint 帐户。
+- 初始化 mint 帐户。
+- 创建token 帐户
+- 初始化 token 帐户。
 - 创建关联token account。
 - 铸造代币到关联token account。
 - 撤销铸币权限（可选）通常在初始供应创建后撤销，以创建固定供应的代币。
@@ -29,10 +30,12 @@ Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态
 - 生成铸币账户和代币账户密钥对。
 - 组装metadata。（Token 2022才有）
 - 计算创建帐户所需要的空间和费用。（Token 2022才有）
-- 创建代币 mint 帐户，并初始化。
+- 创建代币 mint 帐户。
+- 初始化 mint 帐户。
 - 初始化meta pointer extension。（Token 2022才有）
 - 初始化 meta extension。（Token 2022才有）
-- 创建token account并初始化。
+- 创建token 帐户
+- 初始化 token 帐户。
 - 创建关联token account。
 - 铸造代币到关联token account。
 - 撤销铸币权限（可选）通常在初始供应创建后撤销，以创建固定供应的代币。
