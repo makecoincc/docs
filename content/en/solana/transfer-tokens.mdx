@@ -1,17 +1,14 @@
 ---
 title: Transfer Tokens
-description: Transfer tokens between token accounts.
+description: Move tokens between token accounts of the same mint.
 ---
 
-## Code Block
+Provide source account, target account and token amount, target account receives tokens
 
-```js
-console.log('Hello World');
-```
+### Same Type of Tokens
 
-## Cards
+Both token accounts must hold the same type of tokens (mint)
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+### Authorization Required
+
+Only the owner or delegate of the source account can authorize the transfer

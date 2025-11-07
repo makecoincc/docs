@@ -1,17 +1,14 @@
 ---
 title: Set Authority
-description: Set authority for mints or token accounts.
+description: Change or revoke authority for mint and token accounts
 ---
 
-## Code Block
+The SetAuthority instruction can be used to change or revoke authority for mint and token accounts. Only the current authority holder can transfer their authority to a new address, or permanently revoke it by setting the authority to null. Once revoked, authority cannot be restored.
 
-```js
-console.log('Hello World');
-```
+### Mint Account Authority
+- Mint Authority: Controls the creation of new tokens. Can mint tokens to any token account. Usually revoked after initial supply creation to create fixed supply tokens.
+- Freeze Authority: Controls the ability to freeze and unfreeze token accounts. Can prevent any token account from transferring tokens. Usually revoked to ensure user tokens cannot be frozen.
 
-## Cards
-
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+### Token Account Authority
+- Account Owner: Has complete control over the token account. Can transfer tokens, burn tokens, approve delegates, and close the account when balance is zero.
+- Close Authority: Can close a token account when the account balance is zero. By default, this is the account owner, but can be delegated to other accounts.

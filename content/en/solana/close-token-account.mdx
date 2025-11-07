@@ -1,17 +1,10 @@
 ---
 title: Close Token Account
-description: Close token accounts.
+description: Close token account
 ---
 
-## Code Block
+### Close Account
 
-```js
-console.log('Hello World');
-```
-
-## Cards
-
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+Permanently close a token account and transfer all remaining SOL (rent) to a specified destination account.
+The token account balance must be zero before closing.
+Only the owner of the token account or the designated close authority can perform this operation.

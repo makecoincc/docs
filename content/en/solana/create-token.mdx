@@ -1,47 +1,53 @@
 ---
-title: 创建代币
-description: 创建一个SPL（Solana Program Library）代币
+title: Create Token
+description: Create an SPL (Solana Program Library) token
 ---
-import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-Solana 上的代币被称为 SPL (Solana Program Library) 代币。Solana 生态系统有两个主要的 Token Program。
+Tokens on Solana are called SPL (Solana Program Library) tokens. The Solana ecosystem has two main Token Programs.
 
-- [Token Program (原始版本)](https://github.com/solana-program/token) 基本代币功能（铸造、转移等）不可变且广泛使用
-- [Token Extension Program (Token 2022)](https://github.com/solana-program/token-2022) 包含所有原始 Token Program 功能 通过“扩展”添加功能
+- [Token Program (Original Version)](https://github.com/solana-program/token) Basic token functionality (minting, transferring, etc.) is immutable and widely used
+- [Token Extension Program (Token 2022)](https://github.com/solana-program/token-2022) Contains all original Token Program functionality and adds features through "extensions"
 
-创建代币就是使用solana的客户端程序，调用这两个中的一个。
+Creating a token means using Solana's client program to call one of these two.
 
-从创建代币mint帐户开始，一般还需要铸币，最终在用户钱包中显示。所以创建币有几个相应的步骤
+Starting from creating a token mint account, you generally also need to mint tokens, and finally display them in the user's wallet. So creating a token includes several steps:
 
-### Token Program (原始版本)
-<Callout>提供代币的Decimals和Supply，创建代币</Callout>
-- 生成铸币账户和代币账户密钥对。
-- 创建代币 mint 帐户，并初始化。
-- 创建token account并初始化。
-- 创建关联token account。
-- 铸造代币到关联token account。
-- 撤销铸币权限（可选）通常在初始供应创建后撤销，以创建固定供应的代币。
-- 撤销冻结权限（可选）通常会被撤销，以保证用户的代币不能被冻结。
+### Token Program (Original Version)
 
+Provide token Decimals and Supply to create token
+
+- Generate mint account and token account keypairs.
+- Create token mint account.
+- Initialize mint account.
+- Create token account
+- Initialize token account.
+- Create associated token account.
+- Mint tokens to associated token account.
+- Revoke mint authority (optional) Usually revoked after initial supply creation to create fixed supply tokens.
+- Revoke freeze authority (optional) Usually revoked to ensure user tokens cannot be frozen.
 
 ### Token Extension Program (Token 2022)
-<Callout>提供代币的Decimals、Supply、Name、Symbol和Uri，创建代币</Callout>
-- 生成铸币账户和代币账户密钥对。
-- 组装metadata。（Token 2022才有）
-- 计算创建帐户所需要的空间和费用。（Token 2022才有）
-- 创建代币 mint 帐户，并初始化。
-- 初始化meta pointer extension。（Token 2022才有）
-- 初始化 meta extension。（Token 2022才有）
-- 创建token account并初始化。
-- 创建关联token account。
-- 铸造代币到关联token account。
-- 撤销铸币权限（可选）通常在初始供应创建后撤销，以创建固定供应的代币。
-- 撤销冻结权限（可选）通常会被撤销，以保证用户的代币不能被冻结。
 
-### 说明
+Provide token Decimals, Supply, Name, Symbol and Uri to create token
 
-在创建代币过程中创建的mint帐户和token account帐户，都不需要保留私钥，因为初始化mint时，分配了mint和freeze权限给钱包帐户，初始化token account时，将owner设为了钱包帐户。丢弃它们反而是安全的。
+- Generate mint account and token account keypairs.
+- Assemble metadata. (Token 2022 only)
+- Calculate space and fees required to create account. (Token 2022 only)
+- Create token mint account.
+- Initialize mint account.
+- Initialize meta pointer extension. (Token 2022 only)
+- Initialize meta extension. (Token 2022 only)
+- Create token account
+- Initialize token account.
+- Create associated token account.
+- Mint tokens to associated token account.
+- Revoke mint authority (optional) Usually revoked after initial supply creation to create fixed supply tokens.
+- Revoke freeze authority (optional) Usually revoked to ensure user tokens cannot be frozen.
 
+### Notes
 
-### 命令行工具
-如果你在电脑上安装了[Solana CLI](https://solana.com/zh/docs/intro/installation)，以上创建代币也可以使用[spl-token](https://solana.com/zh/docs/tokens#%E5%88%9B%E5%BB%BA%E6%96%B0%E4%BB%A3%E5%B8%81)命令完成，包括token 2022
+The mint account and token account created during token creation do not need to retain private keys, because when initializing the mint, mint and freeze permissions are assigned to the wallet account, and when initializing the token account, the owner is set to the wallet account. Discarding them is actually safer.
+
+### Command Line Tools
+
+If you have [Solana CLI](https://solana.com/docs/intro/installation) installed on your computer, the above token creation can also be completed using [spl-token](https://solana.com/docs/tokens#creating-a-new-token) commands, including token 2022.

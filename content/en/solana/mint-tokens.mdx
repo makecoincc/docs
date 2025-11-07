@@ -1,22 +1,22 @@
 ---
-title: 铸造代币
-description: 铸造是通过 MintTo 指令创建新的代币单位。
+title: Mint Tokens
+description: Increase token supply.
 ---
 
-<Callout>提供目标代币帐户和代币数量，目标帐户得到代币</Callout>
+Provide target token account and token amount, target account receives tokens
 
-### 铸造权限
-只有拥有铸造权限的账户才能铸造新的代币。  
+### Mint Authority
+Only accounts with mint authority can mint new tokens.
 
-在创建初始供应后，通常会撤销铸造权限，以实现固定供应的代币模型。  
-在创建 Mint 账户时，可以指定铸造权限（mint authority）。  
-后续如需更改或撤销铸造权限，可使用 SetAuthority 指令。只有当前权限持有者才能将权限转移至新的地址，或将权限设置为 null 来永久撤销。一旦撤销，权限无法恢复。
+After creating the initial supply, mint authority is usually revoked to achieve a fixed supply token model.
+When creating a Mint account, you can specify the mint authority.
+If you need to change or revoke mint authority later, you can use the SetAuthority instruction. Only the current authority holder can transfer authority to a new address, or set authority to null to permanently revoke it. Once revoked, authority cannot be restored.
 
-### 目标代币账户
-铸造代币时，必须指定一个目标代币账户用于接收代币。  
+### Target Token Account
+When minting tokens, you must specify a target token account to receive the tokens.
 
-通常会创建一个关联代币账户（Associated Token Account），用于将钱包地址与特定代币的 Token Account 绑定。  
-将代币铸造至关联账户，实质上就是将代币发送至该钱包的持有地址。
+Usually an Associated Token Account is created to bind a wallet address with a specific token's Token Account.
+Minting tokens to an associated account essentially sends tokens to that wallet's holding address.
 
-### 说明
-在使用Makecoin创建代币时，会包含铸造代币，如果当时选择了撤销铸造权限，则无法再铸造对应的代币，没撤销则可以。
+### Notes
+When creating tokens using Makecoin, minting tokens will be included. If you chose to revoke mint authority at that time, you cannot mint the corresponding tokens again. If not revoked, you can.
