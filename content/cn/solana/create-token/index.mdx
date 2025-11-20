@@ -1,0 +1,96 @@
+---
+title: Solana平台发币
+description: 在Solana链上发币
+---
+
+### 基本概念
+
+mint帐户、token 帐户, ATA等概念请通过Solana官网了解。
+
+### 钱包与网络
+
+你得有一个Solana的钱包，推荐[Phantom](https://phantom.com/)，可以安装在手机或浏览器。如果安装了Solana CLI，可以通过命令创建一个本地钱包。
+```shell
+solana-keygen new
+```
+
+你可以使用开发网络验证创建代币等功能。等你准备好了，也可以在正式网络操作。开发网络的SOL可通过命令或水龙头网站等免费获取，正式网络的SOL需要花钱购买。
+
+钱包或Solana CLI都支持在不同的网络间切换。
+
+
+### 准备工作
+
+在Solana上代币分几种
+
+- 最简单的代币，没有名字、没有符号、没有图标，但它作为一个代币的功能该有都有。
+- 普通代币，有名字、符号、图标，其他信息
+- NFT，有图片、作者、专辑等信息
+
+根据你想发的币种，准备资料，比如名字、符号、图片等
+
+### 上传
+
+发币时代币的图标和存放代币信息的json文件，需要先放在网络上，发币完成后，钱包、区块链浏览器等通过这些网址显示代币的信息。
+
+你可将文件存放在任意网络平台，只要上传后能得到文件的地址，并能正常访问。
+
+- [Pinata](https://app.pinata.cloud/) 是一个基于ipfs的文件服务，注册后可免费上传文件，想自定义域名要pro用户。
+- 将信息存放在github代码库，提交代码后，得到文件的地址。
+- 将github的代码库，布署在vercel，有域名的话还可以免费自定义域名
+- 将github的代码库，布署到cloudflare，或直接上传，有域名的话还可以免费自定义域名
+- 使用supabase平台上传文件，想自定义域名要pro用户。
+
+如果你有域名，可以像makecoin一样，将静态资源托管到cloudflare，这样https,自定义域名,cdn都有了。如果你想使用makecoin的这项服务，可以提交文件到[https://github.com/makecoincc/img](https://github.com/makecoincc/img),得到一个img.makecoin.cc/yourpath/picname类似的网址。
+
+
+### 快速发币
+
+在Solana上发币，有很多种途径，值得一题的是，官方提供了两个Token Program，这两个程序（智能合约被称为程序）的作用就是发币，通过命令行、调用sdk就能非常方便的完成发币。
+这两个Token Program的区别，token-2022相对于原始版本，拥有更多扩展功能，包括直接将名字、符号、图标等存在代币的无数据中。
+
+<Cards>
+  <Card title="命令行方式部署代币" href="/cn/docs/solana/create-token/create-token-cli" description="使用官方 Solana CLI 工具进行代币创建与管理" />
+  <Card title="在线 IDE 快速发币体验" href="/cn/docs/solana/create-token/create-token-playground" description="基于浏览器的 Solana 开发环境，无需安装，适合快速测试和教学演示"/>
+  <Card title="Gill SDK" href="/cn/docs/solana/create-token/create-token-gill" description="基于 @solana/kit 的轻量级 SDK，简化 RPC 调用与交易构建"/>
+  {/* <Card title="@solana/kit" href="/cn/docs/solana/create-token/create-token-kit" description="Solana 第二代 JS/TS SDK"/> */}
+  <Card title="TS Legacy" href="/cn/docs/solana/create-token/create-token-ts" description="使用旧版 @solana/web3.js 库进行代币创建"/>
+  {/* <Card title="TS Legacy Helper" href="/cn/docs/solana/create-token/create-token-ts-helper" description="基于 web3.js 的辅助函数集合，封装常见代币创建流程，降低开发门槛"/> */}
+  <Card title="基于Metaplex的SDK发币" href="/cn/docs/solana/create-token/create-token-metaplex" description="使用Metaplex提供的工具发行数字资产"/>
+</Cards>
+
+对比各种发币的方案后，makecoin最终采用了@metaplex-foundation的方案，对@solana/kit和TS Legacy Helper不再做研究。
+
+**Solana还提供了Rust、Python、Java、Go等的SDK，本平台不支持**
+
+### 代币认证
+
+代币创建完成后，你在[explorer.solana.com](explorer.solana.com)可能看到以下这段话。
+<Callout>
+Warning! Token names and logos are not unique. This token may have spoofed its name and logo to look like another token. Verify the token's mint address to ensure it is correct. If you are the token creator, please verify your token on Coingecko or on Jupiter.
+</Callout>
+意思就是代币未认证，可能是仿冒的，代币的发行者可以去Coingecko或Jupiter认证，提供官网、社交媒体帐号等资料申请。认证过的代币对用户而言更可信。
+
+### 交易代币
+
+如果你在正式网络发行了代币，肯定是希望有人来买卖代币，让它有价值，但是在初期，你的代币不为人知，你也无法让它上交易所。这时流动性池是你需要的。
+简单地说，你可以按自己想要的比例存放你的代币和另一种代币，另一种通常是稳定币，用户可以通过这个流动性池买卖你的代币。代币的价格会随这个流动性池中的代币数量变动。
+
+### makecoin平台
+
+你可以参考本站提供的方式、代码创建代币，也可以通过makecoin网站开发的功能完成。
+
+#### 上传
+makecoin提供文件上传功能。
+
+#### 创建代币
+makecoin提供代币创建功能。
+
+#### 认证
+介绍认证平台和流程。
+makecoin不提供代币认证，请自行申请。
+
+#### 交易
+介绍主流的代币交易平台，帮助用户创建流动性池。
+在未来，makecoin考虑集成这些主流的去中心化交易所（DEX）的智能合约接口，在网站上直接完成创建。
+

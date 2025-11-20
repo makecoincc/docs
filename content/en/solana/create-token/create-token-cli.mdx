@@ -1,0 +1,108 @@
+---
+title: Deploy Tokens via Command Line
+description: Use official Solana CLI tools for token creation and management
+---
+
+### Solana CLI
+Solana's official development kit includes the solana cli command-line tool. Using it makes token creation very convenient.
+
+[Quick Installation](https://solana.com/docs/intro/installation) or [Install Dependencies](https://solana.com/docs/intro/installation/dependencies), and you'll have the solana-cli command-line tool on your computer.
+You can choose quick installation to install all development tools; when installing dependencies, you can choose to install only solana-cli.
+
+### Switch Network
+
+```shell
+solana config set -um    # mainnet
+solana config set -ud    # devnet
+solana config set -ul    # localhost, generally not used
+solana config set -ut    # testnet, generally not used
+```
+
+### Get Test Tokens
+
+```shell
+solana airdrop 2
+```
+
+### Create Token
+
+```shell
+spl-token create-token
+```
+Yes, it's that simple, the token is created. The address you get is the token's mint address.
+
+But obviously, things are not finished yet, let's continue:
+
+```shell
+spl-token create-account <mint_address>
+```
+Create a token account, only token accounts can hold corresponding tokens.
+
+```shell
+spl-token mint <mint_address> 100
+```
+
+Mint tokens, the quantity depends on your needs. If you haven't created a token address, minting will fail.
+
+Okay, if your local computer wallet also exists in Phantom, you should be able to see the token you created, although its name displays as Unknown Token, symbol displays as null, and icon is blank.
+
+### Add Token Information
+
+Although token creation was successful, not having a name, symbol, and icon is not perfect, let's add this information.
+
+Since we're using the command line, here we also use another command-line tool to complete this.
+
+[Metaboss](https://metaboss.dev/) officially promotes itself as the Swiss Army knife for Solana NFTs, but it can also be used to add metadata to tokens.
+
+Create a json file on your local computer with the following format:
+```json
+{
+  "name": "Crabbie",
+  "symbol": "CRAB",
+  "uri": "https://arweave.net/KZDlKw8aCG4kfZtj9Qmh8tmYpH4Q287P_jmUtkl2s-k"
+}
+```
+
+> The URL corresponding to uri is also a json with the following format. Much of the information is not required, this just shows what kind of data Solana supports storing. Generally, tokens only need name, symbol, and image.
+```json
+{
+    "name": "Studious Crabs",
+    "symbol": "CRAB",
+    "description": "The Studious Crabs are smart and productive crabs.",
+    "image": "https://arweave.net/6mWNNDYKbn06pj9_2LxpMZA-g78F7XEPdnAdNm87vI4?ext=png",
+    "attributes": [
+
+    ],
+    "properties": {
+        "files": [
+            {
+                "uri": "https://arweave.net/6mWNNDYKbn06pj9_2LxpMZA-g78F7XEPdnAdNm87vI4?ext=png",
+                "type": "image/png"
+            }
+        ]
+    }
+}
+```
+
+Execute command:
+```shell
+metaboss create metadata -a <mint_address> -m <metadata_file> // metadata_file is the local file path
+```
+
+Done.
+
+### Create Token with token-2022
+
+```shell
+spl-token create-token --program-id TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb --enable-metadata
+```
+
+Create a token that supports metadata. TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb is the id of token-2022.
+
+```shell
+spl-token initialize-metadata <mint_address> "Token Name" "SYMBOL" https://youdomain/metadata.json --owner ~/.config/solana/id.json
+```
+
+Done.
+
+You can see that creating tokens with name, symbol, and icon through token-2022 using the command line is very simple.

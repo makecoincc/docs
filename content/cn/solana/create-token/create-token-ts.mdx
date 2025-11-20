@@ -1,0 +1,508 @@
+---
+title: TS Legacy
+description: 使用旧版 @solana/web3.js 库进行代币创建
+---
+
+### TS Legacy
+
+TS Legacy指的是 @solana/web3.js 这是最开始的Solana官方ts开发库，应该是使用最多的，目前官方也还在维护。
+
+### 官网示例
+
+```ts
+import {
+  Connection,
+  Keypair,
+  sendAndConfirmTransaction,
+  SystemProgram,
+  Transaction,
+  LAMPORTS_PER_SOL
+} from "@solana/web3.js";
+import {
+  createInitializeMintInstruction,
+  MINT_SIZE,
+  getMinimumBalanceForRentExemptMint,
+  TOKEN_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+  createAssociatedTokenAccountInstruction,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  createMintToInstruction
+} from "@solana/spl-token";
+
+// Create connection to local validator
+const connection = new Connection("http://localhost:8899", "confirmed");
+const latestBlockhash = await connection.getLatestBlockhash();
+
+// Generate a new keypair for the fee payer
+const feePayer = Keypair.generate();
+
+// Airdrop 1 SOL to fee payer
+const airdropSignature = await connection.requestAirdrop(
+  feePayer.publicKey,
+  LAMPORTS_PER_SOL
+);
+await connection.confirmTransaction({
+  blockhash: latestBlockhash.blockhash,
+  lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+  signature: airdropSignature
+});
+
+// Generate keypair to use as address of mint
+const mint = Keypair.generate();
+
+// Get minimum balance for rent exemption
+const mintRent = await getMinimumBalanceForRentExemptMint(connection);
+
+// Get the associated token account address
+const associatedTokenAccount = getAssociatedTokenAddressSync(
+  mint.publicKey,
+  feePayer.publicKey,
+  false, // allowOwnerOffCurve
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+
+// Create account instruction
+const createAccountInstruction = SystemProgram.createAccount({
+  fromPubkey: feePayer.publicKey,
+  newAccountPubkey: mint.publicKey,
+  space: MINT_SIZE,
+  lamports: mintRent,
+  programId: TOKEN_PROGRAM_ID
+});
+
+// Initialize mint instruction
+const initializeMintInstruction = createInitializeMintInstruction(
+  mint.publicKey, // mint pubkey
+  2, // decimals
+  feePayer.publicKey, // mint authority
+  feePayer.publicKey, // freeze authority
+  TOKEN_PROGRAM_ID
+);
+
+// Create associated token account instruction
+const createAssociatedTokenAccountIx = createAssociatedTokenAccountInstruction(
+  feePayer.publicKey, // payer
+  associatedTokenAccount, // associated token account address
+  feePayer.publicKey, // owner
+  mint.publicKey, // mint
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+
+// Create and sign transaction with both mint creation and ATA creation
+const transaction = new Transaction({
+  feePayer: feePayer.publicKey,
+  blockhash: latestBlockhash.blockhash,
+  lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+}).add(
+  createAccountInstruction,
+  initializeMintInstruction,
+  createAssociatedTokenAccountIx
+);
+
+// Sign transaction
+const transactionSignature = await sendAndConfirmTransaction(
+  connection,
+  transaction,
+  [feePayer, mint]
+);
+
+console.log("Mint Address:", mint.publicKey.toBase58());
+console.log(
+  "Associated Token Account Address:",
+  associatedTokenAccount.toBase58()
+);
+console.log("Transaction Signature:", transactionSignature);
+
+// Create a separate transaction for minting tokens
+// Create mint to instruction (mint 100 tokens = 1.00 with 2 decimals)
+const mintAmount = 100;
+const mintToInstruction = createMintToInstruction(
+  mint.publicKey, // mint
+  associatedTokenAccount, // destination
+  feePayer.publicKey, // authority
+  mintAmount, // amount
+  [], // multiSigners
+  TOKEN_PROGRAM_ID // programId
+);
+
+// Get a new blockhash for the mint transaction
+const mintBlockhash = await connection.getLatestBlockhash();
+
+// Create and sign transaction for minting tokens
+const mintTransaction = new Transaction({
+  feePayer: feePayer.publicKey,
+  blockhash: mintBlockhash.blockhash,
+  lastValidBlockHeight: mintBlockhash.lastValidBlockHeight
+}).add(mintToInstruction);
+
+// Sign and send mint transaction
+const mintTransactionSignature = await sendAndConfirmTransaction(
+  connection,
+  mintTransaction,
+  [feePayer]
+);
+
+console.log("Successfully minted 1.0 tokens");
+console.log("Transaction Signature:", mintTransactionSignature);
+```
+
+### 代码解释
+
+这段代码可以在NodeJS环境中运行，但需要启动本地开发环境，因为代码中指定了环境为本地
+```ts
+const connection = new Connection("http://localhost:8899", "confirmed");
+```
+
+如果你已经安装了本地solana工具，运行以下命令以启动本地 validator：
+
+```shell
+solana-test-validator
+```
+
+如果你希望直接用开发环境，则修改代码：  
+
+```ts
+const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+
+```
+
+#### 创建钱包密钥对
+
+```ts
+const feePayer = Keypair.generate();
+
+```
+
+#### 获取空投代币
+
+```ts
+const airdropSignature = await connection.requestAirdrop(
+  feePayer.publicKey,
+  LAMPORTS_PER_SOL
+);
+await connection.confirmTransaction({
+  blockhash: latestBlockhash.blockhash,
+  lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
+  signature: airdropSignature
+});
+```
+
+#### 生成mint帐户密钥对
+
+```ts
+const mint = Keypair.generate();
+```
+
+钱包和mint帐户都是密钥对，特别的，mint的私钥可以无需理会，因为创建mint帐户时，指定mint和freeze的权限给钱包。后续的操作有钱包就行。
+
+#### 计算关联代币账户
+
+```ts
+const associatedTokenAccount = getAssociatedTokenAddressSync(
+  mint.publicKey,
+  feePayer.publicKey,
+  false, // allowOwnerOffCurve
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+```
+代币需要存放在token帐户中，关联代币账户也是token帐户，它简化了为特定铸造和所有者查找 token account 地址的过程。
+
+#### 创建mint帐户指令
+
+```ts
+const createAccountInstruction = SystemProgram.createAccount({
+  fromPubkey: feePayer.publicKey,
+  newAccountPubkey: mint.publicKey,
+  space: MINT_SIZE,
+  lamports: mintRent,
+  programId: TOKEN_PROGRAM_ID
+});
+```
+
+#### 初始化mint帐户指令
+
+```ts
+const initializeMintInstruction = createInitializeMintInstruction(
+  mint.publicKey, // mint pubkey
+  2, // decimals
+  feePayer.publicKey, // mint authority
+  feePayer.publicKey, // freeze authority
+  TOKEN_PROGRAM_ID
+);
+```
+
+decimals可指定，在[命令行创建代币](/cn/docs/solana/create-token/create-token-cli)时，默认为9，无法指定。
+
+这里指定mint和freeze的权限给钱包。
+
+#### 生成关联代币帐户指令
+
+```ts
+const createAssociatedTokenAccountIx = createAssociatedTokenAccountInstruction(
+  feePayer.publicKey, // payer
+  associatedTokenAccount, // associated token account address
+  feePayer.publicKey, // owner
+  mint.publicKey, // mint
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+```
+
+#### 发送交易
+
+```ts
+const transaction = new Transaction({
+  feePayer: feePayer.publicKey,
+  blockhash: latestBlockhash.blockhash,
+  lastValidBlockHeight: latestBlockhash.lastValidBlockHeight
+}).add(
+  createAccountInstruction,
+  initializeMintInstruction,
+  createAssociatedTokenAccountIx
+);
+
+const transactionSignature = await sendAndConfirmTransaction(
+  connection,
+  transaction,
+  [feePayer, mint]
+);
+```
+
+一次发送3条指令
+
+#### 铸造代币指令
+
+```ts
+const mintAmount = 100;
+const mintToInstruction = createMintToInstruction(
+  mint.publicKey, // mint
+  associatedTokenAccount, // destination
+  feePayer.publicKey, // authority
+  mintAmount, // amount
+  [], // multiSigners
+  TOKEN_PROGRAM_ID // programId
+);
+```
+
+指定了铸造代币的数量，注意之前初始化mint时decimals的值，比如2，那这里铸造100个，其实只是一百个位=1个代币。
+铸造代币时，要指定接收代币的token帐户。
+
+#### 发送交易
+
+```ts
+const mintTransaction = new Transaction({
+  feePayer: feePayer.publicKey,
+  blockhash: mintBlockhash.blockhash,
+  lastValidBlockHeight: mintBlockhash.lastValidBlockHeight
+}).add(mintToInstruction);
+
+const mintTransactionSignature = await sendAndConfirmTransaction(
+  connection,
+  mintTransaction,
+  [feePayer]
+);
+```
+
+### 元数据与元数据指针扩展
+
+```ts
+import {
+  Connection,
+  Keypair,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+  LAMPORTS_PER_SOL
+} from "@solana/web3.js";
+import {
+  TOKEN_2022_PROGRAM_ID,
+  createInitializeMintInstruction,
+  createInitializeAccountInstruction,
+  createInitializeMetadataPointerInstruction,
+  getMintLen,
+  getAccountLen,
+  TYPE_SIZE,
+  ExtensionType,
+  createInitializeInstruction,
+  LENGTH_SIZE
+} from "@solana/spl-token";
+import { pack, type TokenMetadata } from "@solana/spl-token-metadata";
+
+// Create connection to local validator
+const connection = new Connection("http://localhost:8899", "confirmed");
+
+// Generate the authority for the mint (also acts as fee payer)
+const authority = Keypair.generate();
+
+// Airdrop SOL to fee payer
+const airdropSig = await connection.requestAirdrop(
+  authority.publicKey,
+  5 * LAMPORTS_PER_SOL
+);
+await connection.confirmTransaction(airdropSig, "confirmed");
+
+// Generate keypair to use as mint account
+const mint = Keypair.generate();
+
+// Create the metadata object
+const metadata: TokenMetadata = {
+  mint: mint.publicKey,
+  name: "OPOS",
+  symbol: "OPS",
+  uri: "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/metadata.json",
+  additionalMetadata: [["description", "Only Possible On Solana"]]
+};
+
+// Size of metadata
+const metadataLen = pack(metadata).length;
+
+// Size of MetadataExtension 2 bytes for type, 2 bytes for length
+const metadataExtension = TYPE_SIZE + LENGTH_SIZE;
+
+// metadata pointer extension size
+const spaceWithoutMetadataExtension = getMintLen([
+  ExtensionType.MetadataPointer
+]);
+
+// Calculate rent exemption
+const lamportsForMint = await connection.getMinimumBalanceForRentExemption(
+  spaceWithoutMetadataExtension + metadataLen + metadataExtension
+);
+
+// Create account for the mint
+const createMintAccountIx = SystemProgram.createAccount({
+  fromPubkey: authority.publicKey,
+  newAccountPubkey: mint.publicKey,
+  space: spaceWithoutMetadataExtension,
+  lamports: lamportsForMint,
+  programId: TOKEN_2022_PROGRAM_ID
+});
+
+// Initialize metadata pointer extension
+const initializeMetadataPointerIx = createInitializeMetadataPointerInstruction(
+  mint.publicKey, // mint account
+  authority.publicKey, // authority
+  mint.publicKey, // metadata address
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Initialize mint account
+const initializeMintIx = createInitializeMintInstruction(
+  mint.publicKey, // mint
+  9, // decimals
+  authority.publicKey, // mint authority
+  authority.publicKey, // freeze authority
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Initialize metadata extension
+const initializeMetadataIx = createInitializeInstruction({
+  programId: TOKEN_2022_PROGRAM_ID,
+  mint: mint.publicKey,
+  metadata: mint.publicKey,
+  mintAuthority: authority.publicKey,
+  name: "OPOS",
+  symbol: "OPS",
+  uri: "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/metadata.json",
+  updateAuthority: authority.publicKey
+});
+
+// Optional: create a token account for the mint
+const tokenAccount = Keypair.generate();
+const accountLen = getAccountLen([]);
+const lamportsForAccount =
+  await connection.getMinimumBalanceForRentExemption(accountLen);
+const createTokenAccountIx = SystemProgram.createAccount({
+  fromPubkey: authority.publicKey,
+  newAccountPubkey: tokenAccount.publicKey,
+  space: accountLen,
+  lamports: lamportsForAccount,
+  programId: TOKEN_2022_PROGRAM_ID
+});
+const initializeTokenAccountIx = createInitializeAccountInstruction(
+  tokenAccount.publicKey,
+  mint.publicKey,
+  authority.publicKey,
+  TOKEN_2022_PROGRAM_ID
+);
+
+// Build transaction
+const tx = new Transaction().add(
+  createMintAccountIx,
+  initializeMetadataPointerIx,
+  initializeMintIx,
+  initializeMetadataIx
+);
+
+// Send and confirm transaction
+await sendAndConfirmTransaction(connection, tx, [authority, mint]);
+
+console.log("Mint Address:", mint.publicKey.toBase58());
+console.log("Token Account:", tokenAccount.publicKey.toBase58());
+```
+
+### 代码解释
+
+与原始Token program相同的地方不再赘述。
+
+#### 代币元数据
+```ts
+const metadata: TokenMetadata = {
+  mint: mint.publicKey,
+  name: "OPOS",
+  symbol: "OPS",
+  uri: "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/metadata.json",
+  additionalMetadata: [["description", "Only Possible On Solana"]]
+};
+```
+
+#### 计算空间及费用
+
+```ts
+// Size of metadata
+const metadataLen = pack(metadata).length;
+
+// Size of MetadataExtension 2 bytes for type, 2 bytes for length
+const metadataExtension = TYPE_SIZE + LENGTH_SIZE;
+
+// metadata pointer extension size
+const spaceWithoutMetadataExtension = getMintLen([
+  ExtensionType.MetadataPointer
+]);
+
+// Calculate rent exemption
+const lamportsForMint = await connection.getMinimumBalanceForRentExemption(
+  spaceWithoutMetadataExtension + metadataLen + metadataExtension
+);
+```
+
+计算存放元数据创建mint帐户时所需的空间大小和费用
+
+#### 初始化扩展程序
+
+```ts
+const initializeMetadataPointerIx = createInitializeMetadataPointerInstruction(
+  mint.publicKey, // mint account
+  authority.publicKey, // authority
+  mint.publicKey, // metadata address
+  TOKEN_2022_PROGRAM_ID
+);
+
+const initializeMetadataIx = createInitializeInstruction({
+  programId: TOKEN_2022_PROGRAM_ID,
+  mint: mint.publicKey,
+  metadata: mint.publicKey,
+  mintAuthority: authority.publicKey,
+  name: "OPOS",
+  symbol: "OPS",
+  uri: "https://raw.githubusercontent.com/solana-developers/opos-asset/main/assets/DeveloperPortal/metadata.json",
+  updateAuthority: authority.publicKey
+});
+```
+
+#### token帐户
+
+官网示例创建token帐户部分未完成，因为指令构建完成后没有发送交易。

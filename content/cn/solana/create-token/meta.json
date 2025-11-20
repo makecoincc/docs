@@ -1,0 +1,9 @@
+{
+    "pages": [
+        "create-token-cli",
+        "create-token-playground",
+        "create-token-gill",
+        "create-token-ts",
+        "create-token-metaplex"
+    ]
+}

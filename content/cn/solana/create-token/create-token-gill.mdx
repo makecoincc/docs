@@ -1,0 +1,128 @@
+---
+title: Gill SDK
+description: 基于 @solana/kit 的轻量级 SDK，简化 RPC 调用与交易构建
+---
+
+<Callout>Gill交易相关的功能，还在开发中，官网的代码只是计划</Callout>
+
+
+### Gill SDK
+
+gill是基于 @solana/kit再次开发的SDK工具，可运行在NodeJS,浏览器等任何js环境。所以对前端程序员来说，开发网页Solana程序可以选择，web3.js、@solana/kit、gill。
+web3.js是第一代，也是使用最多的，gill是最新的，现在还处于早期阶段。看你的选择了。
+
+### NodeJS
+
+本篇讨论的是在NodeJS中运行gill程序，代码取自官网，并经运行验证。
+
+### 创建代币
+
+```js
+import { createTransaction, getSignatureFromTransaction, signTransactionMessageWithSigners, createSolanaClient, generateKeyPairSigner, getMinimumBalanceForRentExemption, getExplorerLink } from "gill";
+import { getMintSize, getCreateAccountInstruction, getInitializeMintInstruction, getCreateMetadataAccountV3Instruction } from "gill/programs";
+
+// import { type KeyPairSigner } from "gill";
+import { loadKeypairSignerFromFile } from "gill/node";
+import { TOKEN_PROGRAM_ADDRESS, getTokenMetadataAddress } from "gill/programs";
+// import { TOKEN_2022_PROGRAM_ADDRESS } from "gill/programs";
+
+// const tokenProgram = TOKEN_2022_PROGRAM_ADDRESS;
+const tokenProgram = TOKEN_PROGRAM_ADDRESS;
+// This defaults to the file path used by the Solana CLI: `~/.config/solana/id.json`
+
+const signer = await loadKeypairSignerFromFile();
+console.log("signer:", signer.address);
+const { rpc, sendAndConfirmTransaction } = createSolanaClient({
+    urlOrMoniker: "devnet", // `mainnet`, `localnet`, etc
+});
+const space = getMintSize();
+const mint = await generateKeyPairSigner();
+const metadataAddress = await getTokenMetadataAddress(mint);
+
+const { value: latestBlockhash } = await rpc.getLatestBlockhash().send();
+const transaction = createTransaction({
+    feePayer: signer,
+    version: "legacy",
+    instructions: [
+        getCreateAccountInstruction({
+            space,
+            lamports: getMinimumBalanceForRentExemption(space),
+            newAccount: mint,
+            payer: signer,
+            programAddress: tokenProgram,
+        }),
+        getInitializeMintInstruction(
+            {
+                mint: mint.address,
+                mintAuthority: signer.address,
+                freezeAuthority: signer.address,
+                decimals: 9,
+            },
+            {
+                programAddress: tokenProgram,
+            },
+        ),
+        getCreateMetadataAccountV3Instruction({
+            collectionDetails: null,
+            isMutable: true,
+            updateAuthority: signer,
+            mint: mint.address,
+            metadata: metadataAddress,
+            mintAuthority: signer,
+            payer: signer,
+            data: {
+                sellerFeeBasisPoints: 0,
+                collection: null,
+                creators: null,
+                uses: null,
+                name: "super sweet token",
+                symbol: "SST",
+                uri: "https://img.makecoin.cc/makecoin/metadata2.json",
+            },
+        }),
+    ],
+    latestBlockhash,
+});
+
+
+const signedTransaction = await signTransactionMessageWithSigners(transaction);
+
+signedTransaction && console.log(
+    "Explorer:",
+    getExplorerLink({
+        cluster: "devnet",
+        transaction: getSignatureFromTransaction(signedTransaction),
+    }),
+);
+signedTransaction && await sendAndConfirmTransaction(signedTransaction);
+
+
+```
+
+https://img.makecoin.cc/makecoin/metadata2.json 的内容如下
+```json
+{
+    "name": "OPOS",
+    "symbol": "OPOS",
+    "description": "Only Possible On Solana",
+    "image": "https://img.makecoin.cc/1inch.png",
+    "attributes": [
+      {
+        "trait_type": "Item",
+        "value": "Climate"
+      }
+    ]
+  }
+```
+
+### 名称、符号
+
+作为实验，在代码和json中分别指定了不同的name和symbol，我们来看最终在钱包和浏览器中看到的是什么
+
+
+![wallet](/images/wallet.png)
+
+![explorer](/images/explorer.png)
+
+符号无论钱包还是浏览器，都用了代码中的值，而名字钱包用了代码中的，而浏览器用了json中的值，这里只是做个实验，一般我们在代码和json中用一样的名字和符号
+

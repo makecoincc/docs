@@ -1,0 +1,109 @@
+---
+title: 命令行方式部署代币
+description: 使用官方 Solana CLI 工具进行代币创建与管理
+---
+
+### Solana CLI
+Solana官方的开发套件中，包含solana cli这个命令行工具。使用它可以很方便的创建代币。
+
+[快速安装](https://solana.com/docs/intro/installation)或[安装依赖](https://solana.com/docs/intro/installation/dependencies)后，在电脑上就有solana-cli这个命令行工具。
+可以选择快速安装，安装所有开发工具；安装依赖时则可选择仅安装solana-cli。
+
+### 切换网络
+
+```shell
+solana config set -um    # 主网
+solana config set -ud    # 开发网
+solana config set -ul    # 本机，一般不用
+solana config set -ut    # 测试网，一般不用
+```
+
+### 获取测试代币
+
+```shell
+solana airdrop 2
+```
+### 创建代币
+
+```shell
+spl-token create-token
+```
+是的，就这么简单，代币创建完成。得到的地址是代币的mint地址。
+
+但是显然，事情还没有结束，让我们继续：
+
+```shell
+spl-token create-account <mint_address>
+```
+创建一个token account，只有token add能持有相应的代币。
+
+```shell
+spl-token mint <mint_address> 100
+```
+
+铸造代币，数量依你需要。如果没有创建token address，铸币会失败。
+
+好了，如果你本地电脑的钱包，也存在Phantom，那么你应该能看到你创建的代币了，当然它的名字显示为Unknown Token，符号显示为null，图标为空白。
+
+### 补充代币的信息
+
+创建代币虽然成功了，但是没有名字、符号、图标总是不怎么完美，让我们来补上这些信息吧。
+
+既然我们在用命令行，这里我们也用另一个命令行工具来完成。
+
+[Metaboss](https://metaboss.dev/)的官方宣传它是Solana NFT的瑞士军刀，但它也可以用来给token添加元数据。
+
+在本地电脑创建json，格式如下：
+```json
+{
+  "name": "Crabbie",
+  "symbol": "CRAB",
+  "uri": "https://arweave.net/KZDlKw8aCG4kfZtj9Qmh8tmYpH4Q287P_jmUtkl2s-k"
+}
+
+```
+
+> uri对应的网址，也是一个json，格式如下，很多信息不是必须的，这里只是展示Solana支持存放什么样的数据。一般的代币只要name、symbol、image就够了
+```json
+{
+    "name": "Studious Crabs",
+    "symbol": "CRAB",
+    "description": "The Studious Crabs are smart and productive crabs.",
+    "image": "https://arweave.net/6mWNNDYKbn06pj9_2LxpMZA-g78F7XEPdnAdNm87vI4?ext=png",
+    "attributes": [
+
+    ],
+    "properties": {
+        "files": [
+            {
+                "uri": "https://arweave.net/6mWNNDYKbn06pj9_2LxpMZA-g78F7XEPdnAdNm87vI4?ext=png",
+                "type": "image/png"
+            }
+        ]
+    }
+}
+```
+
+执行命令
+```shell
+metaboss create metadata -a <mint_address> -m <metadata_file> // metadata_file为本地文件地址
+```
+
+完成。
+
+### 创建代币 token-2022
+
+```shell
+spl-token create-token --program-id TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb --enable-metadata
+```
+
+创建支持元数据的代币，TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb是token-2022的id。
+
+```shell
+spl-token initialize-metadata <mint_address> "Token Name" "SYMBOL" https://youdomain/metadata.json --owner ~/.config/solana/id.json
+```
+
+完成。
+
+可以看到用命令行通过token-2022创建有名字、符号、图标的代币非常简单。
+

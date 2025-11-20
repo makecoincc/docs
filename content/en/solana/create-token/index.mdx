@@ -1,0 +1,93 @@
+---
+title: Token Issuance on Solana Platform
+description: Issue tokens on the Solana blockchain
+---
+
+### Basic Concepts
+
+Please learn about concepts such as mint accounts, token accounts, ATA, etc. through the Solana official website.
+
+### Wallet and Network
+
+You need a Solana wallet, [Phantom](https://phantom.com/) is recommended, which can be installed on mobile or browser. If you have Solana CLI installed, you can create a local wallet through commands.
+```shell
+solana-keygen new
+```
+
+You can use the development network to verify functions such as token creation. When you're ready, you can also operate on the mainnet. SOL on the development network can be obtained for free through commands or faucet websites, while SOL on the mainnet needs to be purchased.
+
+Both wallets and Solana CLI support switching between different networks.
+
+### Preparation
+
+There are several types of tokens on Solana:
+
+- The simplest token, without name, symbol, or icon, but it has all the functions a token should have.
+- Regular tokens, with name, symbol, icon, and other information
+- NFT, with images, author, album and other information
+
+Prepare materials according to the type of token you want to issue, such as name, symbol, image, etc.
+
+### Upload
+
+When issuing tokens, the token icon and the json file storing token information need to be placed on the network first. After token issuance is completed, wallets, blockchain explorers, etc. display token information through these URLs.
+
+You can store files on any network platform, as long as you can get the file address after uploading and access it normally.
+
+- [Pinata](https://app.pinata.cloud/) is an ipfs-based file service. After registration, you can upload files for free. Custom domains require pro users.
+- Store information in a github repository, and get the file address after submitting code.
+- Deploy the github repository to vercel, and you can also customize the domain for free if you have one
+- Deploy the github repository to cloudflare, or upload directly, and you can also customize the domain for free if you have one
+- Use the supabase platform to upload files. Custom domains require pro users.
+
+If you have a domain, you can host static resources to cloudflare like makecoin, so you have https, custom domain, and cdn. If you want to use makecoin's service, you can submit files to [https://github.com/makecoincc/img](https://github.com/makecoincc/img) and get a URL similar to img.makecoin.cc/yourpath/picname.
+
+### Quick Token Issuance
+
+There are many ways to issue tokens on Solana. It is worth mentioning that the official provides two Token Programs. The role of these two programs (smart contracts are called programs) is to issue tokens. It is very convenient to complete token issuance through command line and calling SDK.
+The difference between these two Token Programs is that token-2022 has more extended functions compared to the original version, including directly storing name, symbol, icon, etc. in the token's metadata.
+
+<Cards>
+  <Card title="Deploy Tokens via Command Line" href="/en/docs/solana/create-token/create-token-cli" description="Use official Solana CLI tools for token creation and management" />
+  <Card title="Quick Token Issuance Experience with Online IDE" href="/en/docs/solana/create-token/create-token-playground" description="Browser-based Solana development environment, no installation required, suitable for quick testing and teaching demonstrations"/>
+  <Card title="Gill SDK" href="/en/docs/solana/create-token/create-token-gill" description="Lightweight SDK based on @solana/kit, simplifying RPC calls and transaction construction"/>
+  {/* <Card title="@solana/kit" href="/en/docs/solana/create-token/create-token-kit" description="Solana second-generation JS/TS SDK"/> */}
+  <Card title="TS Legacy" href="/en/docs/solana/create-token/create-token-ts" description="Create tokens using the legacy @solana/web3.js library"/>
+  {/* <Card title="TS Legacy Helper" href="/en/docs/solana/create-token/create-token-ts-helper" description="Helper function collection based on web3.js, encapsulating common token creation processes, lowering development barriers"/> */}
+  <Card title="Token Issuance Based on Metaplex SDK" href="/en/docs/solana/create-token/create-token-metaplex" description="Issue digital assets using tools provided by Metaplex"/>
+</Cards>
+
+After comparing various token issuance solutions, makecoin finally adopted the @metaplex-foundation solution and no longer researches @solana/kit and TS Legacy Helper.
+
+**Solana also provides SDKs for Rust, Python, Java, Go, etc., which are not supported by this platform**
+
+### Token Verification
+
+After the token is created, you may see the following message on [explorer.solana.com](explorer.solana.com).
+<Callout>
+Warning! Token names and logos are not unique. This token may have spoofed its name and logo to look like another token. Verify the token's mint address to ensure it is correct. If you are the token creator, please verify your token on Coingecko or on Jupiter.
+</Callout>
+This means the token is not verified and may be counterfeit. Token issuers can verify on Coingecko or Jupiter by providing official website, social media accounts and other information. Verified tokens are more trustworthy to users.
+
+### Token Trading
+
+If you issue tokens on the mainnet, you definitely hope someone will buy and sell the tokens to give them value, but in the early stages, your tokens are unknown and you cannot get them listed on exchanges. This is when liquidity pools are what you need.
+Simply put, you can deposit your tokens and another token in the proportion you want. The other token is usually a stablecoin. Users can buy and sell your tokens through this liquidity pool. The token price will change with the number of tokens in this liquidity pool.
+
+### Makecoin Platform
+
+You can refer to the methods and code provided by this site to create tokens, or you can complete it through the functions developed by the makecoin website.
+
+#### Upload
+Makecoin provides file upload functionality.
+
+#### Create Token
+Makecoin provides token creation functionality.
+
+#### Verification
+Introduce verification platforms and processes.
+Makecoin does not provide token verification, please apply yourself.
+
+#### Trading
+Introduce mainstream token trading platforms to help users create liquidity pools.
+In the future, makecoin considers integrating smart contract interfaces of these mainstream decentralized exchanges (DEX) to complete creation directly on the website.
