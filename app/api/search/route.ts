@@ -5,7 +5,7 @@ import { createTokenizer } from '@orama/tokenizers/mandarin';
 export const { GET } = createFromSource(source, {
   localeMap: {
     // [locale]: Orama options
-    cn: {
+    zh: {
       components: {
         tokenizer: createTokenizer(),
       },
